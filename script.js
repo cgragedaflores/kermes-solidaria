@@ -114,6 +114,9 @@ async function cargarPlatosDesdeGoogle() {
         const response = await fetch(SHEET_URL);
         const csv = await response.text();
 
+        // Parsear CSV
+        const lineas = csv.trim().split('\n');
+        
         // Separar comidas y bebidas
         platos = {};
         bebidas = {};
@@ -140,8 +143,10 @@ async function cargarPlatosDesdeGoogle() {
         // Llenar los selects
         llenarSelectPlatos();
         llenarSelectBebidas();
+        console.log('✅ Platos cargados desde Google Sheets');
     } catch (error) {
-        console.error('Error cargando Google Sheets:', error);
+        console.error('❌ Error cargando Google Sheets:', error);
+        console.log('⚠️ Usando datos locales de respaldo');
         mostrarError('No se pudieron cargar los platos. Verifica tu Google Sheet ID.');
         cargarPlatosLocales();
     }
@@ -151,6 +156,7 @@ async function cargarPlatosDesdeGoogle() {
 // PLATOS LOCALES (si Google Sheets falla)
 // ============================================
 function cargarPlatosLocales() {
+    console.log('📦 Cargando platos locales de respaldo');
     platos = {
         arepa: { nombre: 'Picante', precio: 30.00 },
         empanada: { nombre: 'Keperi al Horno', precio: 30.00 },
