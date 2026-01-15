@@ -38,11 +38,11 @@ async function registrarTransaccion(plato, cantidad, precio, tipoPago) {
         fecha: new Date().toLocaleString('es-VE'),
         hora: new Date().toLocaleTimeString('es-VE')
     };
-    
+
     transacciones.push(transaccion);
     guardarTransacciones();
     actualizarTotalRecaudado();
-    
+
     // Enviar a Google Sheets y esperar respuesta
     await enviarAGoogleSheets(transaccion);
 }
@@ -55,13 +55,13 @@ async function enviarAGoogleSheets(transaccion) {
         tipoPago: transaccion.tipoPago,
         total: transaccion.total
     };
-    
+
     try {
         await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify(data)
         });
-    } catch(err) {
+    } catch (err) {
         console.log('Venta registrada localmente');
     }
 }
@@ -74,19 +74,19 @@ function calcularTotales() {
         qr: 0,
         cantidad: 0
     };
-    
+
     transacciones.forEach(t => {
         const total = parseFloat(t.total);
         totales.general += total;
         totales.cantidad += t.cantidad;
-        
+
         if (t.tipoPago === 'efectivo') {
             totales.efectivo += total;
         } else if (t.tipoPago === 'qr') {
             totales.qr += total;
         }
     });
-    
+
     return totales;
 }
 
@@ -113,21 +113,21 @@ async function cargarPlatosDesdeGoogle() {
     try {
         const response = await fetch(SHEET_URL);
         const csv = await response.text();
-        
+
         // Separar comidas y bebidas
         platos = {};
         bebidas = {};
-        
+
         // Saltar encabezado (primera fila)
         for (let i = 1; i < lineas.length; i++) {
             const [nombre, precio] = lineas[i].split(',').map(v => v.trim());
-            
+
             if (nombre && precio) {
                 const id = nombre.toLowerCase().replace(/\s+/g, '_');
-                
+
                 // Identificar si es bebida (contiene palabras clave)
-                if (nombre.toLowerCase().includes('cerveza') || 
-                    nombre.toLowerCase().includes('bebida') || 
+                if (nombre.toLowerCase().includes('cerveza') ||
+                    nombre.toLowerCase().includes('bebida') ||
                     nombre.toLowerCase().includes('chicha') ||
                     nombre.toLowerCase().includes('refresco')) {
                     bebidas[id] = { nombre: nombre, precio: parseFloat(precio) };
@@ -136,7 +136,7 @@ async function cargarPlatosDesdeGoogle() {
                 }
             }
         }
-        
+
         // Llenar los selects
         llenarSelectPlatos();
         llenarSelectBebidas();
@@ -152,14 +152,13 @@ async function cargarPlatosDesdeGoogle() {
 // ============================================
 function cargarPlatosLocales() {
     platos = {
-        arepa: { nombre: 'Arepa', precio: 3.00 },
-        empanada: { nombre: 'Empanada', precio: 2.50 },
-        tequeño: { nombre: 'Tequeño', precio: 2.00 },
-        cachapa: { nombre: 'Cachapa', precio: 4.00 },
-        pastel: { nombre: 'Pastel', precio: 1.50 }
+        arepa: { nombre: 'Picante', precio: 30.00 },
+        empanada: { nombre: 'Keperi al Horno', precio: 30.00 },
+        tequeño: { nombre: 'Lechon al Horno', precio: 30.00 },
+        cachapa: { nombre: 'Sopa de Mani', precio: 15.00 }
     };
     bebidas = {
-        chicha: { nombre: 'Chicha de maní', precio: 3.00 },
+        chicha: { nombre: 'Chicha', precio: 3.00 },
         cerveza: { nombre: 'Cerveza', precio: 25.00 },
         cervezas_oferta: { nombre: '2 Cervezas - Oferta', precio: 45.00 }
     };
@@ -173,7 +172,7 @@ function cargarPlatosLocales() {
 function llenarSelectPlatos() {
     const select = document.getElementById('platoSelect');
     select.innerHTML = '<option value="">-- Selecciona una comida --</option>';
-    
+
     for (const [id, plato] of Object.entries(platos)) {
         const option = document.createElement('option');
         option.value = id;
@@ -189,7 +188,7 @@ function llenarSelectPlatos() {
 function llenarSelectBebidas() {
     const select = document.getElementById('bebidaSelect');
     select.innerHTML = '<option value="">-- Selecciona una bebida --</option>';
-    
+
     for (const [id, bebida] of Object.entries(bebidas)) {
         const option = document.createElement('option');
         option.value = id;
@@ -210,7 +209,7 @@ function mostrarError(mensaje) {
 function cambiarPlato() {
     const id = document.getElementById('platoSelect').value;
     document.getElementById('bebidaSelect').value = '';
-    
+
     if (!id) {
         platoActual = '';
         precioUnitario = 0;
@@ -218,7 +217,7 @@ function cambiarPlato() {
         actualizarDisplay();
         return;
     }
-    
+
     platoActual = id;
     precioUnitario = platos[id].precio;
     tipo_seleccion = 'plato';
@@ -230,7 +229,7 @@ function cambiarPlato() {
 function cambiarBebida() {
     const id = document.getElementById('bebidaSelect').value;
     document.getElementById('platoSelect').value = '';
-    
+
     if (!id) {
         platoActual = '';
         precioUnitario = 0;
@@ -238,7 +237,7 @@ function cambiarBebida() {
         actualizarDisplay();
         return;
     }
-    
+
     platoActual = id;
     precioUnitario = bebidas[id].precio;
     tipo_seleccion = 'bebida';
@@ -329,11 +328,11 @@ function generarQR(text, canvas) {
     const ctx = canvas.getContext('2d');
     canvas.width = 300;
     canvas.height = 300;
-    
+
     // Dibujar cuadrado blanco
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, 300, 300);
-    
+
     // Dibujar patrón QR simple
     ctx.fillStyle = '#000';
     for (let i = 0; i < 10; i++) {
@@ -343,7 +342,7 @@ function generarQR(text, canvas) {
             }
         }
     }
-    
+
     // Dibujar borde
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 2;
@@ -364,7 +363,7 @@ function cobrar() {
     const total = (cantidad * precioUnitario).toFixed(2);
     const platoNombre = platos[platoActual].nombre;
     const confirmacion = confirm(`¿Confirmar cobro?\n\n${platoNombre}\nCantidad: ${cantidad}\nTotal: Bs ${total}`);
-    
+
     if (confirmacion) {
         alert(`✓ COBRO REALIZADO\n\n${platoNombre}\nCantidad: ${cantidad}\nBs ${total}\n\n¡Gracias por tu aporte a la Kermes Solidaria!`);
         registrarTransaccion(platoNombre, cantidad, precioUnitario, 'efectivo');
@@ -395,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         document.body.appendChild(modal);
     }
-    
+
     // Crear modal Resumen
     if (!document.getElementById('modalResumen')) {
         const modal = document.createElement('div');
@@ -430,10 +429,10 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         document.body.appendChild(modal);
     }
-    
+
     // Cargar transacciones del localStorage
     cargarTransacciones();
-    
+
     // Cargar platos desde Google Sheets
     cargarPlatosDesdeGoogle();
 });
@@ -441,12 +440,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Mostrar modal de resumen
 function mostrarResumen() {
     const totales = calcularTotales();
-    
+
     document.getElementById('resumenTotal').textContent = `Bs ${totales.general.toFixed(2)}`;
     document.getElementById('resumenCantidad').textContent = totales.cantidad;
     document.getElementById('resumenEfectivo').textContent = `Bs ${totales.efectivo.toFixed(2)}`;
     document.getElementById('resumenQR').textContent = `Bs ${totales.qr.toFixed(2)}`;
-    
+
     // Mostrar transacciones
     const listHTML = transacciones.map(t => `
         <div class="transaccion-item">
@@ -456,9 +455,9 @@ function mostrarResumen() {
             </div>
         </div>
     `).join('');
-    
+
     document.getElementById('transaccionesList').innerHTML = listHTML || '<p style="text-align: center; color: #999;">No hay transacciones registradas</p>';
-    
+
     document.getElementById('modalResumen').classList.add('show');
 }
 
