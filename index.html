@@ -52,11 +52,21 @@
                 <p id="cantidad">1</p>
             </div>
 
+            <!-- BOTÓN AGREGAR AL CARRITO -->
+            <button class="btn-agregar" onclick="agregarAlCarrito()">🛒 AGREGAR AL CARRITO</button>
+
+            <!-- CARRITO -->
+            <div id="carritoContainer" class="carrito-container" style="display: none;">
+                <h3>Carrito de compra</h3>
+                <div id="carritoLista" class="carrito-lista"></div>
+                <div class="carrito-total">
+                    <strong>Total: Bs <span id="carritoTotal">0.00</span></strong>
+                </div>
+            </div>
+
             <!-- BOTONES DE ACCIÓN -->
             <button class="btn-principal" onclick="cobrarEfectivo()">💵 EFECTIVO</button>
             <button class="btn-qr" onclick="cobrarQR()">📱 QR</button>
-            <button class="btn-total" onclick="mostrarTotal()">💰 TOTAL Bs <span id="totalDisplay">0.00</span></button>
-            <button class="btn-cobrar" onclick="mostrarResumen()">📊 VER RESUMEN</button>
         </div>
     </main>
 

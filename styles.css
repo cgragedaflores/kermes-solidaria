@@ -207,6 +207,123 @@ body {
     margin: 0;
 }
 
+/* BOTÓN AGREGAR AL CARRITO */
+.btn-agregar {
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #FF6B35;
+    color: white;
+    transition: all 0.3s;
+}
+
+.btn-agregar:hover {
+    background-color: #e55a25;
+    transform: scale(1.02);
+}
+
+/* CARRITO */
+.carrito-container {
+    background: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.carrito-container h3 {
+    margin: 0 0 15px 0;
+    color: #004E89;
+    font-size: 20px;
+}
+
+.carrito-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.carrito-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.carrito-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.carrito-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.btn-cantidad-carrito {
+    background: #004E89;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cantidad-carrito:hover {
+    background: #003666;
+}
+
+.cantidad-carrito {
+    font-weight: bold;
+    color: #004E89;
+    min-width: 40px;
+    text-align: center;
+}
+
+.carrito-item-precio {
+    color: #2A9D8F;
+    font-weight: bold;
+}
+
+.btn-eliminar-item {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-eliminar-item:hover {
+    background: #cc0000;
+}
+
+.carrito-total {
+    text-align: right;
+    font-size: 20px;
+    color: #004E89;
+    padding-top: 10px;
+    border-top: 2px solid #ddd;
+}
+
 /* BOTONES PRINCIPALES */
 .btn-principal {
     padding: 20px;

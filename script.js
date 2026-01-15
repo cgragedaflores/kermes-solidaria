@@ -10,6 +10,9 @@ let platos = {}; // Se cargará desde Google Sheets
 let bebidas = {}; // Bebidas separadas
 let tipo_seleccion = ''; // 'plato' o 'bebida'
 
+// Sistema de carrito
+let carrito = []; // Items agregados antes de cobrar
+
 // Sistema de transacciones
 let transacciones = []; // Array de todas las transacciones
 
@@ -102,6 +105,7 @@ function actualizarTotalRecaudado() {
 // ID de tu hoja de Google Sheets
 const GOOGLE_SHEET_ID = '1_D5ZBRypn13cY5IwD7g9ejHuZCNSNREXbVTtf0JUtuw';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv`;
+const VENTAS_SHEET_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Ventas`;
 
 // URL del Google Apps Script para registrar ventas
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdKmcnq6bSnp_bncY-M46dsIqIbS3EyzgtOtUFeaN4SeMUjI1HPvNqiMvfhyGmWMfS/exec';
@@ -214,13 +218,14 @@ function mostrarError(mensaje) {
 // Cambiar plato seleccionado
 function cambiarPlato() {
     const id = document.getElementById('platoSelect').value;
-    document.getElementById('bebidaSelect').value = '';
-
+    
     if (!id) {
-        platoActual = '';
-        precioUnitario = 0;
-        tipo_seleccion = '';
-        actualizarDisplay();
+        if (!document.getElementById('bebidaSelect').value) {
+            platoActual = '';
+            precioUnitario = 0;
+            tipo_seleccion = '';
+            actualizarDisplay();
+        }
         return;
     }
 
@@ -234,13 +239,14 @@ function cambiarPlato() {
 // Cambiar bebida seleccionada
 function cambiarBebida() {
     const id = document.getElementById('bebidaSelect').value;
-    document.getElementById('platoSelect').value = '';
-
+    
     if (!id) {
-        platoActual = '';
-        precioUnitario = 0;
-        tipo_seleccion = '';
-        actualizarDisplay();
+        if (!document.getElementById('platoSelect').value) {
+            platoActual = '';
+            precioUnitario = 0;
+            tipo_seleccion = '';
+            actualizarDisplay();
+        }
         return;
     }
 
@@ -249,6 +255,88 @@ function cambiarBebida() {
     tipo_seleccion = 'bebida';
     cantidad = 1;
     actualizarDisplay();
+}
+
+// ============================================
+// SISTEMA DE CARRITO
+// ============================================
+function agregarAlCarrito() {
+    if (!platoActual) {
+        alert('Selecciona un plato o bebida primero');
+        return;
+    }
+
+    const nombre_item = tipo_seleccion === 'bebida' ? bebidas[platoActual].nombre : platos[platoActual].nombre;
+    const total = (cantidad * precioUnitario);
+
+    carrito.push({
+        id: Date.now(),
+        nombre: nombre_item,
+        cantidad: cantidad,
+        precioUnitario: precioUnitario,
+        total: total
+    });
+
+    actualizarCarrito();
+
+    // Limpiar selección
+    document.getElementById('platoSelect').value = '';
+    document.getElementById('bebidaSelect').value = '';
+    platoActual = '';
+    cantidad = 1;
+    actualizarDisplay();
+
+    alert(`✓ ${nombre_item} x${cantidad} agregado al carrito`);
+}
+
+function actualizarCarrito() {
+    const container = document.getElementById('carritoContainer');
+    const lista = document.getElementById('carritoLista');
+    const totalSpan = document.getElementById('carritoTotal');
+
+    if (carrito.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'block';
+
+    // Renderizar items
+    lista.innerHTML = carrito.map((item, index) => `
+        <div class="carrito-item">
+            <div class="carrito-item-info">
+                <strong>${item.nombre}</strong>
+                <div class="carrito-item-controls">
+                    <button class="btn-cantidad-carrito" onclick="modificarCantidadCarrito(${index}, -1)">−</button>
+                    <span class="cantidad-carrito">x${item.cantidad}</span>
+                    <button class="btn-cantidad-carrito" onclick="modificarCantidadCarrito(${index}, 1)">+</button>
+                </div>
+                <span class="carrito-item-precio">Bs ${item.total.toFixed(2)}</span>
+            </div>
+            <button class="btn-eliminar-item" onclick="eliminarDelCarrito(${index})">🗑️</button>
+        </div>
+    `).join('');
+
+    // Calcular total
+    const total = carrito.reduce((sum, item) => sum + item.total, 0);
+    totalSpan.textContent = total.toFixed(2);
+}
+
+function modificarCantidadCarrito(index, cambio) {
+    carrito[index].cantidad += cambio;
+    
+    if (carrito[index].cantidad <= 0) {
+        carrito.splice(index, 1);
+    } else {
+        carrito[index].total = carrito[index].cantidad * carrito[index].precioUnitario;
+    }
+    
+    actualizarCarrito();
+}
+
+function eliminarDelCarrito(index) {
+    carrito.splice(index, 1);
+    actualizarCarrito();
 }
 
 // Aumentar cantidad
@@ -275,8 +363,6 @@ function actualizarDisplay() {
         const nombre_item = tipo_seleccion === 'bebida' ? bebidas[platoActual].nombre : platos[platoActual].nombre;
         document.getElementById('platoActual').textContent = nombre_item;
         document.getElementById('cantidad').textContent = cantidad;
-        const total = (cantidad * precioUnitario).toFixed(2);
-        document.getElementById('totalDisplay').textContent = total;
     } else {
         document.getElementById('platoActual').textContent = 'Selecciona un plato o bebida';
     }
@@ -284,25 +370,35 @@ function actualizarDisplay() {
 
 // Mostrar Total
 function mostrarTotal() {
-    if (!platoActual) {
-        alert('Por favor selecciona un plato o bebida primero');
+    if (carrito.length === 0) {
+        alert('El carrito está vacío. Agrega items primero.');
         return;
     }
-    const total = (cantidad * precioUnitario).toFixed(2);
-    const nombre_item = tipo_seleccion === 'bebida' ? bebidas[platoActual].nombre : platos[platoActual].nombre;
-    alert(`TOTAL: Bs ${total}\n\n${nombre_item}\nCantidad: ${cantidad} x Bs ${precioUnitario.toFixed(2)}`);
+    const total = carrito.reduce((sum, item) => sum + item.total, 0);
+    const detalles = carrito.map(item => `${item.nombre} x${item.cantidad} - Bs ${item.total.toFixed(2)}`).join('\n');
+    alert(`TOTAL CARRITO: Bs ${total.toFixed(2)}\n\n${detalles}`);
 }
 
 // Cobrar con efectivo
 async function cobrarEfectivo() {
-    if (!platoActual) {
-        alert('Por favor selecciona un plato o bebida primero');
+    if (carrito.length === 0) {
+        alert('El carrito está vacío. Agrega items primero.');
         return;
     }
-    const total = (cantidad * precioUnitario).toFixed(2);
-    const nombre_item = tipo_seleccion === 'bebida' ? bebidas[platoActual].nombre : platos[platoActual].nombre;
-    alert(`✓ EFECTIVO RECIBIDO\n\n${nombre_item}\nCantidad: ${cantidad}\nTotal: Bs ${total}\n\n¡Gracias por tu compra!`);
-    await registrarTransaccion(nombre_item, cantidad, precioUnitario, 'efectivo');
+    
+    const total = carrito.reduce((sum, item) => sum + item.total, 0);
+    const detalles = carrito.map(item => `${item.nombre} x${item.cantidad}`).join('\n');
+    
+    alert(`✓ EFECTIVO RECIBIDO\n\n${detalles}\n\nTotal: Bs ${total.toFixed(2)}\n\n¡Gracias por tu compra!`);
+    
+    // Registrar cada item del carrito
+    for (const item of carrito) {
+        await registrarTransaccion(item.nombre, item.cantidad, item.precioUnitario, 'efectivo');
+    }
+    
+    // Limpiar carrito
+    carrito = [];
+    actualizarCarrito();
     document.getElementById('platoSelect').value = '';
     document.getElementById('bebidaSelect').value = '';
     platoActual = '';
@@ -312,14 +408,24 @@ async function cobrarEfectivo() {
 
 // Cobrar con QR
 async function cobrarQR() {
-    if (!platoActual) {
-        alert('Por favor selecciona un plato o bebida primero');
+    if (carrito.length === 0) {
+        alert('El carrito está vacío. Agrega items primero.');
         return;
     }
-    const total = (cantidad * precioUnitario).toFixed(2);
-    const nombre_item = tipo_seleccion === 'bebida' ? bebidas[platoActual].nombre : platos[platoActual].nombre;
-    alert(`✓ PAGO QR REGISTRADO\n\n${nombre_item}\nCantidad: ${cantidad}\nTotal: Bs ${total}\n\n¡Gracias por tu compra!`);
-    await registrarTransaccion(nombre_item, cantidad, precioUnitario, 'qr');
+    
+    const total = carrito.reduce((sum, item) => sum + item.total, 0);
+    const detalles = carrito.map(item => `${item.nombre} x${item.cantidad}`).join('\n');
+    
+    alert(`✓ PAGO QR REGISTRADO\n\n${detalles}\n\nTotal: Bs ${total.toFixed(2)}\n\n¡Gracias por tu compra!`);
+    
+    // Registrar cada item del carrito
+    for (const item of carrito) {
+        await registrarTransaccion(item.nombre, item.cantidad, item.precioUnitario, 'qr');
+    }
+    
+    // Limpiar carrito
+    carrito = [];
+    actualizarCarrito();
     document.getElementById('platoSelect').value = '';
     document.getElementById('bebidaSelect').value = '';
     platoActual = '';
@@ -436,15 +542,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(modal);
     }
 
-    // Cargar transacciones del localStorage
+    // Cargar transacciones del localStorage como respaldo
     cargarTransacciones();
 
     // Cargar platos desde Google Sheets
     cargarPlatosDesdeGoogle();
+    
+    // Cargar ventas desde Google Sheets y actualizar total
+    cargarVentasDesdeGoogleSheets();
 });
 
 // Mostrar modal de resumen
-function mostrarResumen() {
+async function mostrarResumen() {
+    // Cargar ventas desde Google Sheets
+    await cargarVentasDesdeGoogleSheets();
+    
     const totales = calcularTotales();
 
     document.getElementById('resumenTotal').textContent = `Bs ${totales.general.toFixed(2)}`;
@@ -465,6 +577,51 @@ function mostrarResumen() {
     document.getElementById('transaccionesList').innerHTML = listHTML || '<p style="text-align: center; color: #999;">No hay transacciones registradas</p>';
 
     document.getElementById('modalResumen').classList.add('show');
+}
+
+// Cargar ventas desde Google Sheets
+async function cargarVentasDesdeGoogleSheets() {
+    try {
+        const response = await fetch(VENTAS_SHEET_URL);
+        const csv = await response.text();
+        
+        // Parsear CSV
+        const lineas = csv.trim().split('\n');
+        transacciones = [];
+        
+        // Saltar encabezado (primera fila)
+        for (let i = 1; i < lineas.length; i++) {
+            // Formato CSV: Plato, Cantidad, Tipo de Pago, Total, Hora
+            const valores = lineas[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+            if (!valores || valores.length < 4) continue;
+            
+            const plato = valores[0].replace(/^"|"$/g, '').trim();
+            const cantidad = parseInt(valores[1].replace(/^"|"$/g, '').trim());
+            const tipoPago = valores[2].replace(/^"|"$/g, '').trim().toLowerCase();
+            const total = parseFloat(valores[3].replace(/^"|"$/g, '').trim());
+            const hora = valores[4] ? valores[4].replace(/^"|"$/g, '').trim() : '';
+            
+            if (plato && !isNaN(cantidad) && !isNaN(total)) {
+                transacciones.push({
+                    id: Date.now() + i,
+                    plato: plato,
+                    cantidad: cantidad,
+                    precioUnitario: total / cantidad,
+                    total: total.toFixed(2),
+                    tipoPago: tipoPago,
+                    fecha: new Date().toLocaleDateString('es-VE'),
+                    hora: hora
+                });
+            }
+        }
+        
+        console.log('✅ Ventas cargadas desde Google Sheets:', transacciones.length);
+        actualizarTotalRecaudado();
+    } catch (error) {
+        console.error('❌ Error cargando ventas desde Google Sheets:', error);
+        console.log('⚠️ Usando datos locales de localStorage');
+        cargarTransacciones();
+    }
 }
 
 // Cerrar modal de resumen
