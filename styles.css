@@ -1,0 +1,498 @@
+/* ============================================
+   ESTILOS SIMPLES KERMES SOLIDARIA
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* ENCABEZADO */
+.header {
+    background: linear-gradient(135deg, #FF6B35, #004E89);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-stats {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.stat {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 12px 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.btn-ver-resumen {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    border: 2px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-ver-resumen:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .header-flex {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .header-stats {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .stat {
+        flex: 1;
+        min-width: 150px;
+    }
+}
+
+/* CONTENIDO PRINCIPAL */
+.main-content {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.seleccion-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.seleccion-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.seleccion-item .label-plato {
+    width: 100%;
+    text-align: center;
+}
+
+.seleccion-item .input-grande {
+    width: 100%;
+    min-height: 50px;
+}
+
+/* INPUT GRANDE */
+.input-grande {
+    padding: 20px;
+    font-size: 24px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    text-align: center;
+}
+
+.input-grande:focus {
+    outline: none;
+    border-color: #FF6B35;
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+}
+
+/* LABEL */
+.label-plato {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    color: #004E89;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+/* BOTONES DE CONTROL */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-control {
+    flex: 1;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #e0e0e0;
+    color: #333;
+    transition: all 0.3s;
+}
+
+.btn-control:hover {
+    background-color: #d0d0d0;
+    transform: scale(1.02);
+}
+
+.btn-control:active {
+    transform: scale(0.98);
+}
+
+/* DISPLAY DE CANTIDAD */
+.display-box {
+    background: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #004E89;
+}
+
+#cantidad {
+    margin: 0;
+}
+
+/* BOTONES PRINCIPALES */
+.btn-principal {
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #2A9D8F;
+    color: white;
+    transition: all 0.3s;
+}
+
+.btn-principal:hover {
+    background-color: #1a7d6f;
+    transform: scale(1.02);
+}
+
+.btn-principal:active {
+    transform: scale(0.98);
+}
+
+/* BOTÓN QR */
+.btn-qr {
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #87CEEB;
+    color: #333;
+    transition: all 0.3s;
+}
+
+.btn-qr:hover {
+    background-color: #6ab8d4;
+    transform: scale(1.02);
+}
+
+.btn-qr:active {
+    transform: scale(0.98);
+}
+
+/* BOTÓN TOTAL */
+.btn-total {
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #fff;
+    color: #333;
+    border: 2px solid #ddd;
+    transition: all 0.3s;
+}
+
+.btn-total:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.02);
+}
+
+.btn-total:active {
+    transform: scale(0.98);
+}
+
+/* BOTÓN COBRAR */
+.btn-cobrar {
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #FFB6C1;
+    color: #333;
+    transition: all 0.3s;
+}
+
+.btn-cobrar:hover {
+    background-color: #FFA0BE;
+    transform: scale(1.02);
+}
+
+.btn-cobrar:active {
+    transform: scale(0.98);
+}
+
+/* MODAL QR */
+.modal-qr {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-qr.show {
+    display: flex;
+}
+
+.qr-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.qr-content h2 {
+    margin-bottom: 20px;
+    color: #004E89;
+}
+
+.qr-content canvas {
+    margin: 20px 0;
+}
+
+.qr-content button {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #FF6B35;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.qr-content button:hover {
+    background-color: #e55a24;
+}
+
+/* MODAL RESUMEN */
+.modal-resumen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-resumen.show {
+    display: flex;
+}
+
+.resumen-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.resumen-content h2 {
+    margin-bottom: 20px;
+    color: #004E89;
+    font-size: 28px;
+}
+
+.resumen-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.resumen-stat {
+    background: linear-gradient(135deg, #FF6B35, #E76F51);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.resumen-stat-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.resumen-stat-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.transacciones-list {
+    text-align: left;
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 2px solid #ddd;
+    padding-top: 15px;
+}
+
+.transaccion-item {
+    background: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-left: 4px solid #2A9D8F;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.transaccion-plato {
+    font-weight: bold;
+    color: #004E89;
+}
+
+.transaccion-detalles {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.resumen-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.resumen-buttons button {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-cerrar-resumen {
+    background-color: #999;
+    color: white;
+}
+
+.btn-cerrar-resumen:hover {
+    background-color: #777;
+}
+
+.btn-limpiar {
+    background-color: #FF6B35;
+    color: white;
+}
+
+.btn-limpiar:hover {
+    background-color: #e55a24;
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 36px;
+    }
+
+    .input-grande,
+    .btn-control,
+    .btn-principal,
+    .btn-qr,
+    .btn-total,
+    .btn-cobrar {
+        font-size: 18px;
+        padding: 15px;
+    }
+
+    .display-box {
+        font-size: 28px;
+        padding: 20px;
+    }
+
+    .button-group {
+        gap: 8px;
+    }
+}
